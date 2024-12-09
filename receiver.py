@@ -9,57 +9,56 @@ import argparse
 from utils import *
 
 
-
-# Definisci l'alfabeto personalizzato (può essere anche binario)
-custom_alphabet = ['0', '1']  # O ['0', '1'] per il caso binario
+# Define a custom alphabet (binary in this case)
+custom_alphabet = ['0', '1']  # Use ['0', '1'] for binary encoding
 base = len(custom_alphabet)
 
 
-
-def binario_a_stringa(binario):
-    # Divide la stringa binaria in blocchi di 8 bit
-    caratteri = [binario[i:i+8] for i in range(0, len(binario), 8)]
+# Function to convert a binary string to a text string
+def binary_to_string(binary):
+    # Divide the binary string into blocks of 8 bits
+    characters = [binary[i:i+8] for i in range(0, len(binary), 8)]
     
-    # Converte ogni blocco di 8 bit in un carattere
-    stringa = ''.join([chr(int(car, 2)) for car in caratteri])
+    # Convert each 8-bit block to a character
+    string = ''.join([chr(int(char, 2)) for char in characters])
     
-    return stringa
+    return string
 
 
-
-# Funzione principale dello script
+# Main function of the script
 def main():
     start_op_time_tot = time.time()
 
+    # Command-line argument parsing
     parser = argparse.ArgumentParser(description="Inference ROCKET model.")
     parser.add_argument('--model', type=str, default='path_to_trained_model.joblib', help='Path to the trained model')
     parser.add_argument('--folder', type=str, default='metrics', help='Path to the folder with input files')
-    parser.add_argument('--op', type=str, nargs='+', default=['sort','linalg'], help='List of operations to be classified')
-    parser.add_argument('--test', type=str, help='STR send to test')
+    parser.add_argument('--op', type=str, nargs='+', default=['sort', 'linalg'], help='List of operations to be classified')
+    parser.add_argument('--test', type=str, help='Binary string to test')
     
     args = parser.parse_args()
-    class_names = args.op  # Nomi delle classi da riconoscere
+    class_names = args.op  # Names of the classes to recognize
     test_message = args.test
 
+    # Mapping between binary symbols and operations
     operation_names = {
-    '0': class_names[0],
-    '1': class_names[1],
-
+        '0': class_names[0],
+        '1': class_names[1],
     }
 
     operation_names2 = {
         class_names[0]: '0',
-        class_names[1]:'1',
-
+        class_names[1]: '1',
     }
 
-
+    # Paths to model and auxiliary files
     model_path = args.model
     label_encoder_path = f'weights/label_encoder_{class_names}.joblib'
     folder_name = args.folder
     min_vals_file = f'weights/min_vals_{class_names}.csv'
     max_vals_file = f'weights/max_vals_{class_names}.csv'
 
+    # Load normalization parameters and model
     min_vals, max_vals = load_min_max_vals(min_vals_file, max_vals_file)
     
     if os.path.exists(model_path):
@@ -69,51 +68,50 @@ def main():
     
     label_encoder = load_label_encoder(label_encoder_path)
     
+    # Perform inference on all files in the specified folder
     start_msg_time = time.time()
     results, correct_predictions, total_predictions = run_inference_on_files(model, label_encoder, min_vals, max_vals, folder_name)
     msg_time = time.time() - start_msg_time
-    print(f"Tempo per la classificazione totale del messaggio {msg_time:.4f} secondi")
+    print(f"Total time for message classification: {msg_time:.4f} seconds")
 
-    # Stampa i risultati dell'inferenza
+    # Print inference results
     for class_name, predicted_label, file_path in results:
-        print(f"File: {file_path}, Attesa: {class_name}, Predizione: {predicted_label}")
+        print(f"File: {file_path}, Expected: {class_name}, Predicted: {predicted_label}")
     
-    # Prepara le predizioni per la ricodifica
-    ris = [predicted_label for _, predicted_label, _ in results]
+    # Prepare predictions for re-encoding
+    predicted_classes = [predicted_label for _, predicted_label, _ in results]
         
-    print(f"Total predictions: {ris}")
+    print(f"Total predictions: {predicted_classes}")
 
-    # Converti le operazioni di nuovo in una stringa codificata
-    new_encoded_string = operations_to_custom_alphabet(ris,operation_names)
+    # Convert operations back to a custom encoded string
+    new_encoded_string = operations_to_custom_alphabet(predicted_classes, operation_names)
     print(f"Custom string from operations: {new_encoded_string}")
 
-    # Decodifica dalla nuova stringa codificata
+    # Decode the new encoded string
     decoded_from_operations = custom_alphabet_to_string(new_encoded_string)
     print(f"Decoded from operations: {decoded_from_operations}")
 
+    # Total execution time
     op_time_tot = time.time() - start_op_time_tot
-    print(f"Tempo per l'esecuzione totale {op_time_tot:.4f} secondi")
+    print(f"Total execution time: {op_time_tot:.4f} seconds")
     
+    # Compare the test message with the newly decoded message
+    bin_str1 = test_message  # Original binary string for testing
+    bin_str2 = str(new_encoded_string)  # Binary string obtained from decoding operations
 
-    bin_str1 = test_message
-    print(bin_str1)
-    bin_str2 = str(new_encoded_string) # Stringa identica per test
-
-    # Confronta le stringhe binarie
+    # Compare binary strings
     matching_bits, differing_bits, accuracy, matching_bytes, total_bytes = compare_binary_strings(bin_str1, bin_str2)
 
-    print(f"Bit uguali: {matching_bits}")
-    print(f"Bit diversi: {differing_bits}")
-    print(f"Accuratezza: {accuracy:.2f}%")
-    print(f"Byte uguali: {matching_bytes} su {total_bytes}")
+    print(f"Matching bits: {matching_bits}")
+    print(f"Differing bits: {differing_bits}")
+    print(f"Accuracy: {accuracy:.2f}%")
+    print(f"Matching bytes: {matching_bytes} out of {total_bytes}")
 
-    # Converte il binario in stringa
-    stringa = binario_a_stringa(bin_str2)
-    print(f"Stringa risultante: {stringa}")
+    # Convert the binary string to text
+    result_string = binary_to_string(bin_str2)
+    print(f"Resulting string: {result_string}")
 
-# Punto di ingresso dello script
+
+# Script entry point
 if __name__ == "__main__":
-
-    
     main()
-    
