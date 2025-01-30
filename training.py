@@ -166,11 +166,12 @@ def main():
     test_acc = grid_search.score(X_test, y_test)  # Evaluate the model on the test set
     print(f"Test Accuracy: {test_acc:.4f}")
 
-    # Save the best-trained model
-    joblib.dump(grid_search.best_estimator_, f'model/{class_names}_{test_acc:.4f}.joblib')
-    
+
     # Unisce i nomi delle classi in una stringa separata da "_"
-    class_names= "_".join(class_names)
+    class_names = "_".join(class_names)
+
+    # Save the best-trained model
+    joblib.dump(grid_search.best_estimator_, f'model/{class_names}.joblib')
 
     #print(f"Model saved to 'model/{class_names}_{test_acc:.4f}.joblib'")
     print(f"Model saved to 'model/{class_names}.joblib'")

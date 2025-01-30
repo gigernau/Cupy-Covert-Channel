@@ -85,15 +85,14 @@ def main():
 
     # Convert operations back to a custom encoded string
     new_encoded_string = operations_to_custom_alphabet(predicted_classes, operation_names)
-    print(f"Custom string from operations: {new_encoded_string}")
-
-    # Decode the new encoded string
-    decoded_from_operations = custom_alphabet_to_string(new_encoded_string)
-    print(f"Decoded from operations: {decoded_from_operations}")
+    
+    print(f"\n\n**************************************************")
+    print(f"\nBits received: {new_encoded_string}")
+    print(f"\n**************************************************")
 
     # Total execution time
     op_time_tot = time.time() - start_op_time_tot
-    print(f"Total execution time: {op_time_tot:.4f} seconds")
+    print(f"\nTotal execution time: {op_time_tot:.4f} seconds")
     
     # Compare the test message with the newly decoded message
     bin_str1 = test_message  # Original binary string for testing
@@ -106,10 +105,6 @@ def main():
     print(f"Differing bits: {differing_bits}")
     print(f"Accuracy: {accuracy:.2f}%")
     print(f"Matching bytes: {matching_bytes} out of {total_bytes}")
-
-    # Convert the binary string to text
-    result_string = binary_to_string(bin_str2)
-    print(f"Resulting string: {result_string}")
 
 
 # Script entry point

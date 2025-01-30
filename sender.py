@@ -25,7 +25,6 @@ base = len(custom_alphabet)  # Base 2 for binary encoding
 def main():
     # Command-line argument parsing
     parser = argparse.ArgumentParser(description="Inference ROCKET model.")
-    parser.add_argument('--model', type=str, default='path_to_trained_model.joblib', help='Path to the trained model')
     parser.add_argument('--message', type=str, default='OK', help='String to encode and send')
     parser.add_argument('--op', type=str, nargs='+', default=['sort', 'linalg'], help='List of operations to be classified')
 
@@ -104,19 +103,15 @@ def main():
     op_time_tot = time.time() - start_op_time_tot
     print(f"Total time for operations execution: {op_time_tot:.4f} seconds")
 
-    # Path to model and auxiliary files
-    model_path = args.model
-    label_encoder_path = f'weights/label_encoder_{class_names}.joblib'
-    folder_name = 'message/'
-    min_vals_file = f'weights/min_vals_{class_names}.csv'
-    max_vals_file = f'weights/max_vals_{class_names}.csv'
-
-    # Load normalization parameters
-    min_vals, max_vals = load_min_max_vals(min_vals_file, max_vals_file)
 
     # End of total time measurement
     total_time = time.time() - start_total_time
     print(f"Total execution time: {total_time:.4f} seconds")
+
+    print(f"\n\n**************************************************")
+    print(f"\nBits sent: {args.message}")
+    print(f"\n**************************************************")
+
 
 
 if __name__ == "__main__":
