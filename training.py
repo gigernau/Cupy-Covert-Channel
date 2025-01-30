@@ -169,7 +169,11 @@ def main():
     # Save the best-trained model
     joblib.dump(grid_search.best_estimator_, f'model/{class_names}_{test_acc:.4f}.joblib')
     
-    print(f"Model saved to 'model/{class_names}_{test_acc:.4f}.joblib'")
+    # Unisce i nomi delle classi in una stringa separata da "_"
+    class_names= "_".join(class_names)
+
+    #print(f"Model saved to 'model/{class_names}_{test_acc:.4f}.joblib'")
+    print(f"Model saved to 'model/{class_names}.joblib'")
 
     # Save normalization parameters and the label encoder
     min_vals.to_csv(f'weights/min_vals_{class_names}.csv')
@@ -178,3 +182,6 @@ def main():
     print("Normalization parameters and label encoder saved.")
 
     return min_vals, max_vals, label_encoder, test_acc, class_names, folder_name
+
+if __name__ == "__main__":
+    main()
