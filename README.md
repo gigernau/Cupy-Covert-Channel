@@ -36,14 +36,14 @@ This project explores the creation of covert communication channels using GPU me
 
 ## SENDER OF SECRET MESSAGE of COVERT CHANNEL
 
-    python sender.py --op transpose sort --model model/\[\'transpose\'\,\ \'sort\'\]_1.0000.joblib --message 1010
+    python sender.py --op transpose sort --message 1010
 
 
 
 
 ## RECEIVER OF SECRET MESSAGE
 
-    python receiver.py --folder message --op transpose sort --model model/\[\'transpose\'\,\ \'sort\'\]_1.0000.joblib --test 1010
+    python receiver.py --folder message --op transpose sort --model model/transpose_sort.joblib --test 1010
 
 
 <!--- [![Say Thanks!](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/gianluca.delucia) -->
